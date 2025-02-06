@@ -1,0 +1,147 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Statistics - Finance Tracker
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Total Expenses -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Total Expenses
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">E£{{ total_expenses }}</h5>
+        </div>
+    </div>
+
+    <!-- Expense Breakdown by Category -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Expense Breakdown by Category
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Amount (E£)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category, amount in expense_by_category.items() %}
+                    <tr>
+                        <td>{{ category }}</td>
+                        <td>E£{{ amount }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Expense Breakdown by Payment Method -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Expense Breakdown by Payment Method
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Payment Method</th>
+                        <th>Amount (E£)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for method, amount in expense_by_payment_method.items() %}
+                    <tr>
+                        <td>{{ method }}</td>
+                        <td>E£{{ amount }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Charts (Moved Below) -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Expense Breakdown by Category
+                </div>
+                <div class="card-body">
+                    <canvas id="categoryChart" width="200" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Expense Breakdown by Payment Method
+                </div>
+                <div class="card-body">
+                    <canvas id="paymentChart" width="200" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function renderCategoryChart() {
+        const data = {{ expense_by_category | tojson }};
+        console.log("Category Data:", data);
+
+        if (Object.keys(data).length === 0) {
+            document.getElementById('categoryChart').style.display = 'none';
+            return;
+        }
+
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(data),
+                datasets: [{
+                    label: 'Expense by Category',
+                    data: Object.values(data),
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                }]
+            },
+        });
+    }
+
+    function renderPaymentChart() {
+        const data = {{ expense_by_payment_method | tojson }};
+        console.log("Payment Data:", data);
+
+        if (Object.keys(data).length === 0) {
+            document.getElementById('paymentChart').style.display = 'none';
+            return;
+        }
+
+        const ctx = document.getElementById('paymentChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(data),
+                datasets: [{
+                    label: 'Expense by Payment Method',
+                    data: Object.values(data),
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                }]
+            },
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderCategoryChart();
+        renderPaymentChart();
+    });
+</script>
+{% endblock %}

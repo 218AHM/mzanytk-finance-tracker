@@ -1,0 +1,127 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Home - Finance Tracker
+{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <h2>Welcome, {{ username }}!</h2>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Online Transactions</h5>
+                <h6 class="card-subtitle mb-2 text-muted">E£{{ total_online }}</h6>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Cash Transactions</h5>
+                <h6 class="card-subtitle mb-2 text-muted">E£{{ total_cash }}</h6>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Amount</h5>
+                <h6 class="card-subtitle mb-2 text-muted">E£{{ total_amount }}</h6>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expenses Table -->
+    <div class="col-md-12 mt-4">
+        <div class="card">
+            <div class="card-header">
+                Expenses Overview
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Amount (E£)</th>
+                            <th>Payment Method</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction["date"] }}</td>
+                            <td>{{ transaction["category"] }}</td>
+                            <td>E£{{ transaction["amount"] }}</td>
+                            <td>{{ transaction["payment_method"] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Expense Breakdown by Category (Pie Chart)
+    function renderCategoryChart() {
+        const data = {{ expense_by_category | tojson }};
+        console.log("Category Data:", data); // Debugging
+
+        if (Object.keys(data).length === 0) {
+            document.getElementById('categoryChart').style.display = 'none';
+            return;
+        }
+
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(data),
+                datasets: [{
+                    label: 'Expense by Category',
+                    data: Object.values(data),
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                }]
+            }
+        });
+    }
+
+    // Expense Breakdown by Payment Method (Doughnut Chart)
+    function renderPaymentChart() {
+        const data = {{ expense_by_payment_method | tojson }};
+        console.log("Payment Data:", data); // Debugging
+
+        if (Object.keys(data).length === 0) {
+            document.getElementById('paymentChart').style.display = 'none';
+            return;
+        }
+
+        const ctx = document.getElementById('paymentChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(data),
+                datasets: [{
+                    label: 'Expense by Payment Method',
+                    data: Object.values(data),
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                }]
+            }
+        });
+    }
+
+    // Run functions after page load
+    document.addEventListener('DOMContentLoaded', () => {
+        renderCategoryChart();
+        renderPaymentChart();
+    });
+</script>
+
+
+{% endblock %}
