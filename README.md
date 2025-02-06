@@ -1,6 +1,6 @@
 # **Mzanytk - Personal Finance Tracker**
 
-#### 📹 Video Demo:  [Click Here](<URL HERE>)
+#### 📹 Video Demo:  [Click Here](<[URL HERE](https://youtu.be/Midxo5ZdwKk)>)
 
 ## 📌 **Overview**
 **Mzanytk** (an Arabic word meaning _"Your Budget"_) is a **personal finance tracker** designed to help users efficiently **track their expenses**, **analyze spending habits**, and **visualize financial trends**. It provides a user-friendly dashboard where users can:
